@@ -1,23 +1,52 @@
+import 'board.dart';
+
 enum Team {
   white,
   black,
 }
 
+class Piece {
+  final Team team;
+  final String image;
+
+  final PieceMobility mobility;
+
+  const Piece(
+    this.image, {
+    required this.team,
+    required this.mobility,
+  });
+
+  const Piece.white(
+    this.image, {
+    required this.mobility,
+  }) : team = Team.white;
+
+  const Piece.black(
+    this.image, {
+    required this.mobility,
+  }) : team = Team.black;
+}
+
 class Move {
   int x;
   int y;
-  Move(this.x, this.y);
+  bool isEnPassant;
+  Move(this.x, this.y, {this.isEnPassant = false});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Move &&
+          runtimeType == other.runtimeType &&
+          x == other.x &&
+          y == other.y;
+
+  @override
+  int get hashCode => x.hashCode ^ y.hashCode;
 }
 
-class Board {
-  List<List<Piece?>> board = List.generate(8, (i) => List.filled(8, null));
-}
-
-abstract class Piece {
-  Team team;
-  String image;
-
-  Piece({required this.team, required this.image});
-
-  Stream<Move> moves(int x, int y, Board board);
+abstract class PieceMobility {
+  const PieceMobility();
+  Iterable<Move> moves(int x, int y, Team team, Board board);
 }

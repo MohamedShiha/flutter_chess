@@ -1,46 +1,26 @@
-enum Team {
-  white,
-  black,
-}
+import 'package:flutter_chess/model/board.dart';
 
-class Move {
-  int x;
-  int y;
-  Move(this.x, this.y);
-}
+import 'piece.dart';
 
-class Board {
-  List<List<Piece?>> board = [
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-    [],
-  ];
-}
+class ChessGame {
+  Board board = Board.test();
 
-abstract class Piece {
-  Team team;
-  String image;
+  Team turn = Team.white;
 
-  Piece({required this.team, required this.image});
+  void play(Move from, Move to) {
+    board.move(from, to);
+    turn = turn == Team.white ? Team.black : Team.white;
+  }
 
-  Stream<Move> moves(int x, int y, Board board);
-}
+  Iterable<Move> select(int x, int y) sync* {
+    if (board[y][x] == null) return;
 
-class Pawn extends Piece {
-  Pawn({
-    required super.team,
-    required super.image,
-  });
+    if (board[y][x]?.team != turn) return;
 
-  @override
-  Iterable<Move> moves(int x, int y, Board board)  sync*{
+    yield* board[y][x]!.mobility.moves(x, y, turn, board);
+  }
 
-    if()
-    
+  void isGameOver() {
+    // game ends if current player has no moves
   }
 }
