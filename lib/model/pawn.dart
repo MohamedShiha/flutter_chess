@@ -4,46 +4,48 @@ import 'piece.dart';
 class Pawn extends PieceMobility {
   const Pawn();
   @override
-  Iterable<Move> moves(int x, int y, Team team, Board board) sync* {
-    int direction = team == Team.white ? -1 : 1;
-    if (board.isEmpty(x, y + direction)) {
-      yield Move(x, y + direction);
+  Iterable<Move> moves(Move pos, Team team, Board board) sync* {
+    var direction = team == Team.white ? Move.north() : Move.south();
+
+    var tagretMove = pos + direction;
+    if (board.isEmpty(tagretMove)) {
+      yield tagretMove;
+      int initPosition = team == Team.white ? 6 : 1;
+      if (initPosition == pos.y &&
+          board.isPieceFirstMove(pos) &&
+          board.isEmpty(tagretMove + direction)) {
+        yield tagretMove + direction;
+      }
     }
 
-    int initPosition = team == Team.white ? 6 : 1;
+    var attackEast = tagretMove.right;
+    var attackWest = tagretMove.left;
 
-    if (y == initPosition &&
-        board.previous[y][x] != null &&
-        board.previous[y][x]!.mobility is Pawn &&
-        board.previous[y][x]!.team == team &&
-        board.isEmpty(x, y + direction) &&
-        board.isEmpty(x, y + (direction * 2))) {
-      yield Move(x, y + (2 * direction));
+    if (board.isEnemy(attackEast, team)) {
+      yield attackEast;
     }
-
-    if (board.isEnemy(x + 1, y + direction, team)) {
-      yield Move(x + 1, y + direction);
-    }
-    if (board.isEnemy(x - 1, y + direction, team)) {
-      yield Move(x - 1, y + direction);
+    if (board.isEnemy(attackWest, team)) {
+      yield attackWest;
     }
 
     // test en passant
-    if (board.isEmpty(x + 1, y + direction) &&
-        board.isEnemy(x + 1, y, team) &&
-        board[y][x + 1]!.mobility is Pawn &&
-        board.previous[team == Team.black ? 6 : 1][x + 1] != null &&
-        board.previous[team == Team.black ? 6 : 1][x + 1]!.mobility is Pawn &&
-        board[team == Team.black ? 6 : 1][x + 1] == null) {
-      yield Move(x + 1, y + direction, isEnPassant: true);
+
+    var enPassantWest = attackWest;
+    var enPassantEast = attackEast;
+
+    if (board.isEmpty(enPassantWest) &&
+        board.isEnemy(pos.left, team) &&
+        board[pos.left]!.mobility is Pawn &&
+        board.isPawnTwoMoves(
+            pos.left, team == Team.white ? Team.black : Team.white)) {
+      yield Move(enPassantWest.x, enPassantWest.y, isEnPassant: true);
     }
-    if (board.isEmpty(x - 1, y + direction) &&
-        board.isEnemy(x - 1, y, team) &&
-        board[y][x - 1]!.mobility is Pawn &&
-        board.previous[team == Team.black ? 6 : 1][x - 1] != null &&
-        board.previous[team == Team.black ? 6 : 1][x - 1]!.mobility is Pawn &&
-        board[team == Team.black ? 6 : 1][x - 1] == null) {
-      yield Move(x - 1, y + direction, isEnPassant: true);
+    if (board.isEmpty(enPassantEast) &&
+        board.isEnemy(pos.right, team) &&
+        board[pos.right]!.mobility is Pawn &&
+        board.isPawnTwoMoves(
+            pos.right, team == Team.white ? Team.black : Team.white)) {
+      yield Move(enPassantEast.x, enPassantWest.y, isEnPassant: true);
     }
   }
 }

@@ -4,22 +4,22 @@ import 'piece.dart';
 class King extends PieceMobility {
   const King();
   @override
-  Iterable<Move> moves(int x, int y, Team team, Board board) sync* {
+  Iterable<Move> moves(Move pos, Team team, Board board) sync* {
     var moves = [
-      Move(x + 1, y),
-      Move(x + 1, y + 1),
-      Move(x, y + 1),
-      Move(x - 1, y + 1),
-      Move(x - 1, y),
-      Move(x - 1, y - 1),
-      Move(x, y - 1),
-      Move(x + 1, y - 1),
+      pos.right,
+      pos.right.up,
+      pos.up,
+      pos.left.up,
+      pos.left,
+      pos.left.down,
+      pos.down,
+      pos.down.right,
     ];
 
     for (var move in moves) {
-      if (board.isEmpty(move.x, move.y)) {
+      if (board.isEmpty(move)) {
         yield move;
-      } else if (board.isEnemyOrEmpty(move.x, move.y, team)) {
+      } else if (board.isEnemyOrEmpty(move, team)) {
         yield move;
       }
     }

@@ -5,24 +5,27 @@ class Rook extends PieceMobility {
   const Rook();
 
   @override
-  Iterable<Move> moves(int x, int y, Team team, Board board) sync* {
+  Iterable<Move> moves(Move pos, Team team, Board board) sync* {
     // horizontal positive
-    for (var i = x + 1; i < Board.size; i++) {
-      if (board.isEmpty(i, y)) {
-        yield Move(i, y);
-      } else if (board.isEnemyOrEmpty(i, y, team)) {
-        yield Move(i, y);
+    for (var i = 1; i < Board.size; i++) {
+      var target = pos + (Move.zero.up * i);
+      if (board.isEmpty(target)) {
+        yield target;
+      } else if (board.isEnemyOrEmpty(target, team)) {
+        yield target;
         break;
       } else {
         break;
       }
     }
     // horizontal negative
-    for (var i = x - 1; i < Board.size; i--) {
-      if (board.isEmpty(i, y)) {
-        yield Move(i, y);
-      } else if (board.isEnemyOrEmpty(i, y, team)) {
-        yield Move(i, y);
+    for (var i = 1; i < Board.size; i++) {
+      var target = pos + (Move.zero.left * i);
+
+      if (board.isEmpty(target)) {
+        yield target;
+      } else if (board.isEnemyOrEmpty(target, team)) {
+        yield target;
         break;
       } else {
         break;
@@ -30,11 +33,13 @@ class Rook extends PieceMobility {
     }
 
     // vertical positive
-    for (var i = y + 1; i < Board.size; i++) {
-      if (board.isEmpty(x, i)) {
-        yield Move(x, i);
-      } else if (board.isEnemyOrEmpty(x, i, team)) {
-        yield Move(x, i);
+    for (var i = 1; i < Board.size; i++) {
+      var target = pos + (Move.zero.down * i);
+
+      if (board.isEmpty(target)) {
+        yield target;
+      } else if (board.isEnemyOrEmpty(target, team)) {
+        yield target;
         break;
       } else {
         break;
@@ -42,11 +47,13 @@ class Rook extends PieceMobility {
     }
 
     // vertical negative
-    for (var i = y + 1; i < Board.size; i--) {
-      if (board.isEmpty(x, i)) {
-        yield Move(x, i);
-      } else if (board.isEnemyOrEmpty(x, i, team)) {
-        yield Move(x, i);
+    for (var i = 1; i < Board.size; i++) {
+      var target = pos + (Move.zero.right * i);
+
+      if (board.isEmpty(target)) {
+        yield target;
+      } else if (board.isEnemyOrEmpty(target, team)) {
+        yield target;
         break;
       } else {
         break;

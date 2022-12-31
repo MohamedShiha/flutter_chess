@@ -22,7 +22,7 @@ const bKing = Piece.black("assets/king_black.png", mobility: King());
 
 class Board {
   static const int size = 8;
-  List<List<Piece?>> board = [
+  List<List<Piece?>> _board = [
     [bRook, bBishop, bKnight, bKing, bQueen, bKnight, bBishop, bRook],
     [bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn],
     [null, null, null, null, null, null, null, null],
@@ -32,53 +32,77 @@ class Board {
     [wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn],
     [wRook, wBishop, wKnight, wKing, wQueen, wKnight, wBishop, wRook],
   ];
-  List<List<Piece?>> previous = [];
+  List<List<Piece?>> _previous = [];
 
-  List<Piece?> operator [](int i) => board[i];
+  Piece? operator [](Move m) => _board[m.y][m.x];
+
+  void operator []=(Move m, Piece? piece) => _board[m.y][m.x] = piece;
 
   Board() {
-    previous = board.map((e) => e.toList()).toList();
+    _previous = _board.map((e) => e.toList()).toList();
   }
   Board.test() {
-    board = [
+    _board = [
       [null, null, null, null, null, null, null, null],
       [wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn],
       [null, null, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null],
+      [null, null, null, wRook, null, null, null, null],
       [null, null, null, null, null, null, null, null],
       [bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn],
       [null, null, null, null, null, null, null, null],
     ];
-    previous = board.map((e) => e.toList()).toList();
+    _previous = _board.map((e) => e.toList()).toList();
   }
 
   void move(Move from, Move to) {
-    previous = board.map((e) => e.toList()).toList();
-    board[to.y][to.x] = board[from.y][from.x];
-    board[from.y][from.x] = null;
+    _previous = _board.map((e) => e.toList()).toList();
+    _board[to.y][to.x] = _board[from.y][from.x];
+    _board[from.y][from.x] = null;
 
     if (to.isEnPassant) {
       // kill the piece behind the moved pawn
-      var team = board[to.y][to.x]!.team;
-      board[to.y + (team == Team.white ? 1 : -1)][to.x] = null;
+      var team = _board[to.y][to.x]!.team;
+      _board[to.y + (team == Team.white ? 1 : -1)][to.x] = null;
     }
   }
 
-  bool _isOutBound(int x, int y) => x >= size || x < 0 || y >= size || y < 0;
+  bool _isOutBound(Move move) =>
+      move.x >= size || move.x < 0 || move.y >= size || move.y < 0;
 
-  bool isEmpty(int x, int y) {
-    if (_isOutBound(x, y)) return false;
-    return board[y][x] == null;
+  bool isEmpty(Move move) {
+    if (_isOutBound(move)) return false;
+    return _board[move.y][move.x] == null;
   }
 
-  bool isEnemy(int x, int y, Team team) {
-    if (_isOutBound(x, y)) return false;
-    if (isEmpty(x, y)) return false;
-    return board[y][x]!.team != team;
+  bool isEnemy(Move move, Team team) {
+    if (_isOutBound(move)) return false;
+    if (isEmpty(move)) return false;
+    return _board[move.y][move.x]!.team != team;
   }
 
-  bool isEnemyOrEmpty(int x, int y, Team team) {
-    return isEmpty(x, y) || isEnemy(x, y, team);
+  bool isEnemyOrEmpty(Move move, Team team) {
+    return isEmpty(move) || isEnemy(move, team);
+  }
+
+  bool isPieceFirstMove(Move move) {
+    return _board[move.y][move.x] == _previous[move.y][move.x];
+  }
+
+  bool isPawn(Move move) {
+    if (isEmpty(move)) return false;
+
+    return _board[move.y][move.x]!.mobility is Pawn;
+  }
+
+  bool isPawnTwoMoves(Move move, Team team) {
+    if (!isPawn(move)) return false;
+
+    var previousPosition = team == Team.white ? move.down.down : move.up.up;
+
+    if (!isEmpty(previousPosition)) return false;
+
+    return _previous[previousPosition.y][previousPosition.x] ==
+        _board[move.y][move.x];
   }
 }

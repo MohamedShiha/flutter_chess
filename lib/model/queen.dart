@@ -8,8 +8,8 @@ class Queen extends PieceMobility {
   const Queen();
 
   @override
-  Iterable<Move> moves(int x, int y, Team team, Board board) sync* {
-    yield* Rook().moves(x, y, team, board);
-    yield* Bishop().moves(x, y, team, board);
+  Iterable<Move> moves(Move pos, Team team, Board board) sync* {
+    yield* const Rook().moves(pos, team, board);
+    yield* const Bishop().moves(pos, team, board);
   }
 }

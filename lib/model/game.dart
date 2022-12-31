@@ -3,7 +3,7 @@ import 'package:flutter_chess/model/board.dart';
 import 'piece.dart';
 
 class ChessGame {
-  Board board = Board.test();
+  Board board = Board();
 
   Team turn = Team.white;
 
@@ -12,12 +12,12 @@ class ChessGame {
     turn = turn == Team.white ? Team.black : Team.white;
   }
 
-  Iterable<Move> select(int x, int y) sync* {
-    if (board[y][x] == null) return;
+  Iterable<Move> select(Move pos) sync* {
+    if (board[pos] == null) return;
 
-    if (board[y][x]?.team != turn) return;
+    if (board[pos]?.team != turn) return;
 
-    yield* board[y][x]!.mobility.moves(x, y, turn, board);
+    yield* board[pos]!.mobility.moves(pos, turn, board);
   }
 
   void isGameOver() {
