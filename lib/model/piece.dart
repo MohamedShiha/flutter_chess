@@ -33,6 +33,18 @@ class Piece {
     this.image, {
     required this.mobility,
   }) : team = Team.black;
+
+  Piece copyWith({
+    Team? team,
+    String? image,
+    PieceMobility? mobility,
+  }) {
+    return Piece(
+      image ?? this.image,
+      team: team ?? this.team,
+      mobility: mobility ?? this.mobility,
+    );
+  }
 }
 
 class Move {

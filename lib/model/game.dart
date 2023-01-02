@@ -5,7 +5,7 @@ import 'king.dart';
 import 'piece.dart';
 
 class ChessGame {
-  Board board = Board.test();
+  Board board = Board();
 
   Team turn = Team.white;
 
@@ -13,14 +13,21 @@ class ChessGame {
     board.move(from, to);
 
     if (board[to]!.mobility is King) {
-      (board[to]!.mobility as King).hasMoved = true;
+      var kingMobility = board[to]!.mobility as King;
+      board[to] =
+          board[to]!.copyWith(mobility: kingMobility.copyWith(hasMoved: true));
     }
 
     if (board[to]!.mobility is Rook && (from.y == 0 || from.y == 7)) {
+      var kingLocation = locateKing();
+      var kingMobility = board[locateKing()]!.mobility as King;
+
       if (to.x == 0) {
-        (board[locateKing()]!.mobility as King).hasLeftRookMoved = true;
+        board[kingLocation] = board[kingLocation]!
+            .copyWith(mobility: kingMobility.copyWith(hasLeftRookMoved: true));
       } else {
-        (board[locateKing()]!.mobility as King).hasRightRookMoved = true;
+        board[kingLocation] = board[kingLocation]!
+            .copyWith(mobility: kingMobility.copyWith(hasRightRookMoved: true));
       }
     }
 

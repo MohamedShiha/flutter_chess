@@ -17,43 +17,33 @@ const wKnight = Piece.white("assets/knight_white.png", mobility: Knight());
 const bKnight = Piece.black("assets/knight_black.png", mobility: Knight());
 const wQueen = Piece.white("assets/queen_white.png", mobility: Queen());
 const bQueen = Piece.black("assets/queen_black.png", mobility: Queen());
-final wKing = Piece.white("assets/king_white.png", mobility: King());
-final bKing = Piece.black("assets/king_black.png", mobility: King());
+const wKing = Piece.white("assets/king_white.png", mobility: King());
+const bKing = Piece.black("assets/king_black.png", mobility: King());
+const chess_board = [
+  [bRook, bBishop, bKnight, bKing, bQueen, bKnight, bBishop, bRook],
+  [bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn],
+  [wRook, wBishop, wKnight, wKing, wQueen, wKnight, wBishop, wRook],
+];
 
 class Board {
   static const int size = 8;
-  List<List<Piece?>> _board = [
-    [bRook, bBishop, bKnight, bKing, bQueen, bKnight, bBishop, bRook],
-    [bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [null, null, null, null, null, null, null, null],
-    [wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn],
-    [wRook, wBishop, wKnight, wKing, wQueen, wKnight, wBishop, wRook],
-  ];
+  final List<List<Piece?>> _board;
   List<List<Piece?>> _previous = [];
 
   Piece? operator [](Move m) => _board[m.y][m.x];
 
   void operator []=(Move m, Piece? piece) => _board[m.y][m.x] = piece;
 
-  Board() {
+  Board([List<List<Piece?>>? board])
+      : _board = board ?? chess_board.map((e) => e.toList()).toList() {
     _previous = _board.map((e) => e.toList()).toList();
   }
-  Board.test() {
-    _board = [
-      [null, null, null, null, null, null, null, null],
-      [wPawn, bPawn, wPawn, wPawn, wPawn, bPawn, bPawn, wPawn],
-      [null, null, null, null, null, null, null, null],
-      [wPawn, null, null, null, null, null, null, null],
-      [null, null, null, bPawn, bPawn, wBishop, null, null],
-      [null, wBishop, null, null, null, null, null, null],
-      [null, null, null, null, null, null, null, null],
-      [wRook, null, null, wKing, null, null, null, wRook],
-    ];
-    _previous = _board.map((e) => e.toList()).toList();
-  }
+  Board.test() : this();
 
   void move(Move from, Move to) {
     _previous = _board.map((e) => e.toList()).toList();

@@ -2,11 +2,27 @@ import 'board.dart';
 import 'piece.dart';
 
 class King extends PieceMobility {
-  bool hasMoved = false;
-  bool hasRightRookMoved = false;
-  bool hasLeftRookMoved = false;
+  final bool hasMoved;
+  final bool hasRightRookMoved;
+  final bool hasLeftRookMoved;
 
-  King();
+  const King({
+    this.hasMoved = false,
+    this.hasRightRookMoved = false,
+    this.hasLeftRookMoved = false,
+  });
+
+  King copyWith({
+    bool? hasMoved,
+    bool? hasRightRookMoved,
+    bool? hasLeftRookMoved,
+  }) =>
+      King(
+        hasMoved: hasMoved ?? this.hasMoved,
+        hasRightRookMoved: hasRightRookMoved ?? this.hasRightRookMoved,
+        hasLeftRookMoved: hasLeftRookMoved ?? this.hasLeftRookMoved,
+      );
+
   @override
   Iterable<Move> moves(Move pos, Team team, Board board) sync* {
     var moves = [
