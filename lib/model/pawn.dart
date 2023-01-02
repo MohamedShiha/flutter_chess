@@ -38,14 +38,14 @@ class Pawn extends PieceMobility {
         board[pos.left]!.mobility is Pawn &&
         board.isPawnTwoMoves(
             pos.left, team == Team.white ? Team.black : Team.white)) {
-      yield Move(enPassantWest.x, enPassantWest.y, isEnPassant: true);
+      yield Move(enPassantWest.x, enPassantWest.y, type: MoveType.enPassant);
     }
     if (board.isEmpty(enPassantEast) &&
         board.isEnemy(pos.right, team) &&
         board[pos.right]!.mobility is Pawn &&
         board.isPawnTwoMoves(
             pos.right, team == Team.white ? Team.black : Team.white)) {
-      yield Move(enPassantEast.x, enPassantWest.y, isEnPassant: true);
+      yield Move(enPassantEast.x, enPassantEast.y, type: MoveType.enPassant);
     }
   }
 }

@@ -17,8 +17,8 @@ const wKnight = Piece.white("assets/knight_white.png", mobility: Knight());
 const bKnight = Piece.black("assets/knight_black.png", mobility: Knight());
 const wQueen = Piece.white("assets/queen_white.png", mobility: Queen());
 const bQueen = Piece.black("assets/queen_black.png", mobility: Queen());
-const wKing = Piece.white("assets/king_white.png", mobility: King());
-const bKing = Piece.black("assets/king_black.png", mobility: King());
+final wKing = Piece.white("assets/king_white.png", mobility: King());
+final bKing = Piece.black("assets/king_black.png", mobility: King());
 
 class Board {
   static const int size = 8;
@@ -44,13 +44,13 @@ class Board {
   Board.test() {
     _board = [
       [null, null, null, null, null, null, null, null],
-      [wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn],
+      [wPawn, bPawn, wPawn, wPawn, wPawn, bPawn, bPawn, wPawn],
       [null, null, null, null, null, null, null, null],
+      [wPawn, null, null, null, null, null, null, null],
+      [null, null, null, bPawn, bPawn, wBishop, null, null],
+      [null, wBishop, null, null, null, null, null, null],
       [null, null, null, null, null, null, null, null],
-      [null, null, null, wRook, null, null, null, null],
-      [null, null, null, null, null, null, null, null],
-      [bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn],
-      [null, null, null, null, null, null, null, null],
+      [wRook, null, null, wKing, null, null, null, wRook],
     ];
     _previous = _board.map((e) => e.toList()).toList();
   }
@@ -59,24 +59,20 @@ class Board {
     _previous = _board.map((e) => e.toList()).toList();
     _board[to.y][to.x] = _board[from.y][from.x];
     _board[from.y][from.x] = null;
-
-    if (to.isEnPassant) {
-      // kill the piece behind the moved pawn
-      var team = _board[to.y][to.x]!.team;
-      _board[to.y + (team == Team.white ? 1 : -1)][to.x] = null;
-    }
   }
 
-  bool _isOutBound(Move move) =>
+  bool isOutBound(Move move) =>
       move.x >= size || move.x < 0 || move.y >= size || move.y < 0;
 
+  bool isInBound(Move move) => !isOutBound(move);
+
   bool isEmpty(Move move) {
-    if (_isOutBound(move)) return false;
+    if (isOutBound(move)) return false;
     return _board[move.y][move.x] == null;
   }
 
   bool isEnemy(Move move, Team team) {
-    if (_isOutBound(move)) return false;
+    if (isOutBound(move)) return false;
     if (isEmpty(move)) return false;
     return _board[move.y][move.x]!.team != team;
   }

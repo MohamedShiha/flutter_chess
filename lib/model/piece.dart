@@ -5,6 +5,13 @@ enum Team {
   black,
 }
 
+enum MoveType {
+  normal,
+  castle,
+  enPassant,
+  ilVaticano,
+}
+
 class Piece {
   final Team team;
   final String image;
@@ -31,55 +38,29 @@ class Piece {
 class Move {
   final int x;
   final int y;
-  final bool isEnPassant;
-  const Move(this.x, this.y, {this.isEnPassant = false});
+  final MoveType type;
+  const Move(this.x, this.y, {this.type = MoveType.normal});
 
   static get zero => const Move(0, 0);
 
-  Move.north()
-      : x = 0,
-        y = -1,
-        isEnPassant = false;
-  Move.south()
-      : x = 0,
-        y = 1,
-        isEnPassant = false;
-  Move.east()
-      : x = 1,
-        y = 0,
-        isEnPassant = false;
-  Move.west()
-      : x = -1,
-        y = 0,
-        isEnPassant = false;
+  Move.north() : this(0, -1);
+  Move.south() : this(0, 1);
+  Move.east() : this(1, 0);
+  Move.west() : this(-1, 0);
 
-  Move.identical(int d, {this.isEnPassant = false})
-      : x = d,
-        y = d;
+  Move get up => Move(x, y - 1);
 
-  Move get up {
-    return Move(x, y - 1);
-  }
+  Move get down => Move(x, y + 1);
 
-  Move get down {
-    return Move(x, y + 1);
-  }
+  Move get right => Move(x + 1, y);
 
-  Move get right {
-    return Move(x + 1, y);
-  }
+  Move get left => Move(x - 1, y);
 
-  Move get left {
-    return Move(x - 1, y);
-  }
+  Move operator +(Move other) => Move(x + other.x, y + other.y);
 
-  Move operator +(Move other) {
-    return Move(x + other.x, y + other.y);
-  }
+  Move operator -(Move other) => Move(x - other.x, y - other.y);
 
-  Move operator -(Move other) {
-    return Move(x - other.x, y - other.y);
-  }
+  Move operator *(int multiplayer) => Move(x * multiplayer, y * multiplayer);
 
   @override
   bool operator ==(Object other) =>
@@ -89,10 +70,20 @@ class Move {
           x == other.x &&
           y == other.y;
 
-  Move operator *(int multiplayer) => Move(x * multiplayer, y * multiplayer);
-
   @override
   int get hashCode => x.hashCode ^ y.hashCode;
+
+  Move copyWith({
+    int? x,
+    int? y,
+    MoveType? type,
+  }) {
+    return Move(
+      x ?? this.x,
+      y ?? this.y,
+      type: type ?? this.type,
+    );
+  }
 }
 
 abstract class PieceMobility {

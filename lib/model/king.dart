@@ -2,7 +2,11 @@ import 'board.dart';
 import 'piece.dart';
 
 class King extends PieceMobility {
-  const King();
+  bool hasMoved = false;
+  bool hasRightRookMoved = false;
+  bool hasLeftRookMoved = false;
+
+  King();
   @override
   Iterable<Move> moves(Move pos, Team team, Board board) sync* {
     var moves = [
@@ -22,6 +26,22 @@ class King extends PieceMobility {
       } else if (board.isEnemyOrEmpty(move, team)) {
         yield move;
       }
+    }
+
+    if (hasMoved) return;
+
+    if (!hasRightRookMoved &&
+        board.isEmpty(pos.right) &&
+        board.isEmpty(pos.right.right) &&
+        board.isEmpty(pos.right.right.right)) {
+      var target = pos.right.right;
+      yield Move(target.x, target.y, type: MoveType.castle);
+    }
+    if (!hasLeftRookMoved &&
+        board.isEmpty(pos.left) &&
+        board.isEmpty(pos.left.left)) {
+      var target = pos.left.left;
+      yield Move(target.x, target.y, type: MoveType.castle);
     }
   }
 }
