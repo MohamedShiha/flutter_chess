@@ -30,6 +30,17 @@ const chess_board = [
   [wRook, wBishop, wKnight, wKing, wQueen, wKnight, wBishop, wRook],
 ];
 
+const test_board = [
+  [bRook, bBishop, bKnight, bKing, bQueen, bKnight, bBishop, bRook],
+  [bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn, bPawn],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [null, null, null, wRook, null, null, null, null],
+  [null, null, null, null, null, null, null, null],
+  [wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn, wPawn],
+  [wRook, wBishop, wKnight, wKing, wQueen, wKnight, wBishop, wRook]
+];
+
 class Board {
   static const int size = 8;
   final List<List<Piece?>> _board;
@@ -40,7 +51,7 @@ class Board {
   void operator []=(Move m, Piece? piece) => _board[m.y][m.x] = piece;
 
   Board([List<List<Piece?>>? board])
-      : _board = board ?? chess_board.map((e) => e.toList()).toList() {
+      : _board = board ?? test_board.map((e) => e.toList()).toList() {
     _previous = _board.map((e) => e.toList()).toList();
   }
   Board.test() : this();
